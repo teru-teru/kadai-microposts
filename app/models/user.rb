@@ -7,5 +7,23 @@ class User < ApplicationRecord
   has_secure_password
   
   has_many :microposts
+  has_many :relationship
+  has_many :followings, through: :relationship, source: :follow
+  has_many :reverses_of_relationship, class_name: 'Relationship', foreign_key: 'follow_id'
+  has_many :followers, through: :reverses_of_relationship, source: :user
   
+  def follow(other_user)
+    unless self == other_user
+      self.relationship.find_or_create_by(follow_id: other_user.id)
+    end
+  end
+  
+  def unfollow(other_user)
+    relationship = self.relationship.find_by(follow_id: other_user.id)
+    relationship.destroy if relationship
+  end
+  
+  def following?(other_user)
+    self.followings.include?(other_user)
+  end
 end
