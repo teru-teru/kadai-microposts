@@ -1,0 +1,13 @@
+<% if current_user.like?(micropost) %>
+  <%= form_for(current_user.favorites.find_by(like_id: micropost.id), html: { method: :delete, style: "display: inline;" }) do |f| %>
+    <%= hidden_field_tag :like_id, micropost.id %>
+    <%= button_tag(class: "btn btn-danger btn-xs") do %>
+      <%= content_tag :span,"" ,class: "glyphicon glyphicon-heart" %>
+    <% end %>
+  <% end %>
+<% else %>
+  <%= form_for(current_user.favorites.build, html: {style: "display: inline;"}) do |f| %>
+    <%= hidden_field_tag :like_id, micropost.id %>
+    <%= f.submit 'Like', class: 'btn btn-default btn-xs' %>
+  <% end %>
+<% end %>
